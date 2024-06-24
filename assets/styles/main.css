@@ -1,48 +1,48 @@
 body {
-    background-color: #ffe5b4;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-  }
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin-top: 30px;
-  }
-  .card {
-    border: none;
-    transition: transform 0.3s ease;
-    text-align: center;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-  }
+  background-color: #ffe5b4;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+.card {
+  border: none;
+  transition: transform 0.3s ease;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
 
-  .card-img-top {
-    width: 122px;
-    height: 122px;
-    object-fit: cover;
-    margin: auto;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-  }
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-  }
-  .card-text {
-    font-size: 1rem;
-    color: #555;
-  }
-  .card:hover .card-img-top {
-    transform: scale(1.2);
-  }
-  .card:hover .card-title {
-    color: #d9534f;
-  }
-  .card:hover .card-text {
-    color: #5bc0de;
-  }
+.card-img-top {
+  width: 122px;
+  height: 122px;
+  object-fit: cover;
+  margin: auto;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.card-text {
+  font-size: 1rem;
+  color: #555;
+}
+.card:hover .card-img-top {
+  transform: scale(1.2);
+}
+.card:hover .card-title {
+  color: #d9534f;
+}
+.card:hover .card-text {
+  color: #5bc0de;
+}
