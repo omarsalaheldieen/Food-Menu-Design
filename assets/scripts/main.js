@@ -7,7 +7,7 @@ for (let card of cards) {
     // create Iframe
     const iframeContainer = document.getElementById("iframe-container");
     const iframe = document.getElementById("ar-frame");
-    iframe.src = "assets/tabs/" + title + ".html"; // Path to the AR app
+    iframe.src = `/ar-content.html?title=${encodeURIComponent(title)}`; // Path to the AR app with title as a query parameter
     iframeContainer.style.display = "block";
     menu.style.display = "none";
     console.log("Clicked Burger:", title);

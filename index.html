@@ -1,217 +1,124 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-<!-- three.js library -->
-<script src='../ThirdParty/AR.js/three.js/examples/vendor/three.js/build/three.min.js'></script>
-<script src="../ThirdParty/AR.js/three.js/examples/vendor/three.js/examples/js/libs/stats.min.js"></script>
-<script src="../ThirdParty/AR.js/three.js/examples/vendor/three.js/GLTFLoader.js"></script>
-
-<!-- ar.js -->
-<script src="../ThirdParty/AR.js/three.js/build/ar-threex.js"></script>
-<script>THREEx.ArToolkitContext.baseURL = './ThirdParty/AR.js'</script>
-
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-
-	<script>
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Init
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// init renderer
-		var renderer = new THREE.WebGLRenderer({
-			// antialias	: true,
-			alpha: true,
-			powerPreference: "high-performance",
-		});
-		renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.domElement.style.position = 'absolute'
-		renderer.domElement.style.top = '0px'
-		renderer.domElement.style.left = '0px'
-		document.body.appendChild(renderer.domElement);
-
-		console.log(window.innerWidth, window.innerHeight, window.devicePixelRatio)
-
-
-		// array of functions for the rendering loop
-		var onRenderFcts = [];
-		var arToolkitContext, artoolkitMarker, markerRoot;
-
-		// init scene and camera
-		var scene = new THREE.Scene();
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Initialize a basic camera
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// Create a camera
-		var camera = new THREE.Camera();
-		scene.add(camera);
-
-		markerRoot = new THREE.Group
-		scene.add(markerRoot)
-
-		////////////////////////////////////////////////////////////////////////////////
-		//          handle arToolkitSource
-		////////////////////////////////////////////////////////////////////////////////
-
-		var arToolkitSource = new THREEx.ArToolkitSource({
-			// to read from the webcam
-			sourceType: 'webcam',
-			sourceUrl: null,
-			deviceId: null,
-
-			// resolution of at which we initialize in the source image
-			sourceWidth: 640,
-			sourceHeight: 480,
-			// resolution displayed for the source
-			displayWidth: 640,
-			displayHeight: 480,
-		});
-
-		arToolkitSource.init(function onReady() {
-			initARContext()
-			onResize()
-		})
-
-		// handle resize
-		window.addEventListener('resize', function () {
-			onResize()
-		})
-		function onResize() {
-			arToolkitSource.onResizeElement()
-			arToolkitSource.copyElementSizeTo(renderer.domElement)
-			if (window.arToolkitContext.arController !== null) {
-				arToolkitSource.copyElementSizeTo(window.arToolkitContext.arController.canvas)
-			}
-		}
-		////////////////////////////////////////////////////////////////////////////////
-		//          initialize arToolkitContext
-		////////////////////////////////////////////////////////////////////////////////
-
-
-		// create atToolkitContext
-		function initARContext() {
-			console.log('initARContext()');
-
-			arToolkitContext = new THREEx.ArToolkitContext({
-				cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '/data/data/camera_para.dat',
-				detectionMode: 'mono',
-				maxDetectionRate: 120,
-				canvasWidth: 640,
-				canvasHeight: 480,
-				imageSmoothingEnabled : false,
-
-			})
-			// initialize it
-			arToolkitContext.init(function onCompleted() {
-				// copy projection matrix to camera
-				camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-				arToolkitContext.arController.orientation = getSourceOrientation();
-				arToolkitContext.arController.options.orientation = getSourceOrientation();
-
-				console.log('a7aaaaaaaaaaaaaaaa', camera.projectionMatrix);
-				window.arToolkitContext = arToolkitContext;
-			})
-			artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-				type: 'pattern',
-				patternUrl: THREEx.ArToolkitContext.baseURL + '/data/data/patt.hiro'
-				// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji'
-			})
-		}
-
-		function getSourceOrientation() {
-			if (!arToolkitSource) {
-				return null;
-			}
-
-			console.log(
-				'actual source dimensions',
-				arToolkitSource.domElement.videoWidth,
-				arToolkitSource.domElement.videoHeight
-			);
-
-			if (arToolkitSource.domElement.videoWidth > arToolkitSource.domElement.videoHeight) {
-				console.log('source orientation', 'landscape');
-				return 'landscape';
-			} else {
-				console.log('source orientation', 'portrait');
-				return 'portrait';
-			}
-		}
-
-		// update artoolkit on every frame
-		onRenderFcts.push(function () {
-			if (!arToolkitContext || !arToolkitSource || !arToolkitSource.ready) {
-				return;
-			}
-
-			arToolkitContext.update(arToolkitSource.domElement)
-		})
-
-
-		////////////////////////////////////////////////////////////////////////////////
-		//          Create a ArMarkerControls
-		////////////////////////////////////////////////////////////////////////////////
-
-		var markerRoot = new THREE.Group
-		scene.add(markerRoot)
-
-
-		// build a smoothedControls
-		var smoothedRoot = new THREE.Group()
-		scene.add(smoothedRoot)
-		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-			lerpPosition: 0.4,
-			lerpQuaternion: 0.3,
-			lerpScale: 1,
-		})
-		onRenderFcts.push(function (delta) {
-			smoothedControls.update(markerRoot)
-		})
-		//////////////////////////////////////////////////////////////////////////////////
-		//		add an object in the scene
-		//////////////////////////////////////////////////////////////////////////////////
-
-		var arWorldRoot = smoothedRoot
-
-		const loader = new THREE.GLTFLoader();
-		loader.load('../Models/Tagin/scene.gltf', function (gltf) {
-		const model = gltf.scene;
-		model.scale.set(0.05, 0.05, 0.05); 
-		model.rotation.x = Math.PI + (Math.PI / 2);
-
-		arWorldRoot.add(model);
-	});
-
-		// onRenderFcts.push(function () {
-		// 	mesh.rotation.x += 0.1
-		// })
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		render the whole thing on the page                                      //
-		//////////////////////////////////////////////////////////////////////////////////
-		var stats = new Stats();
-		document.body.appendChild(stats.dom);
-		// render the scene
-		onRenderFcts.push(function () {
-			renderer.render(scene, camera);
-			stats.update();
-		})
-
-		// run the rendering loop
-		var lastTimeMsec = null
-		requestAnimationFrame(function animate(nowMsec) {
-			// keep looping
-			requestAnimationFrame(animate);
-			// measure time
-			lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
-			var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
-			lastTimeMsec = nowMsec
-			// call each update function
-			onRenderFcts.forEach(function (onRenderFct) {
-				onRenderFct(deltaMsec / 1000, nowMsec / 1000)
-			})
-		})	
-	</script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Burger Menu GL</title>
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo.png" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/styles/main.css" />
+  </head>
+  <body>
+    <div id="iframe-container">
+      <button class="custom-button" onclick="closeSelf()">🐱 Go Back! 🐱</button>
+      <iframe id="ar-frame" src="" width="100%" height="100%"></iframe>
+    </div>
+    <div class="container">
+      <div class="grid-container">
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Big Mac.png"
+            class="card-img-top"
+            alt="Burger 1"
+          />
+          <div class="card-body">
+            <h5 class="card-title">Tagin</h5>
+            <p class="card-text">$5.99</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Cheese single burger.png"
+            class="card-img-top"
+            alt="Burger 2"
+          />
+          <div class="card-body">
+            <h5 class="card-title">SmashedBaconBurger</h5>
+            <p class="card-text">$6.99</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Double Cheese Burger.png"
+            class="card-img-top"
+            alt="Burger 3"
+          />
+          <div class="card-body">
+            <h5 class="card-title">QuarterPounder</h5>
+            <p class="card-text">$7.99</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Fillet O' Fish lunch set.png"
+            class="card-img-top"
+            alt="Burger 4"
+          />
+          <div class="card-body">
+            <h5 class="card-title">LandAirAndSea</h5>
+            <p class="card-text">$5.49</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Fillet O' Fish Wrap.png"
+            class="card-img-top"
+            alt="Burger 5"
+          />
+          <div class="card-body">
+            <h5 class="card-title">FriesBurger</h5>
+            <p class="card-text">$6.49</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Fries Burger.png"
+            class="card-img-top"
+            alt="Burger 6"
+          />
+          <div class="card-body">
+            <h5 class="card-title">FilletO'FishLunch</h5>
+            <p class="card-text">$7.49</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Land air and sea burger.png"
+            class="card-img-top"
+            alt="Burger 7"
+          />
+          <div class="card-body">
+            <h5 class="card-title">DoubleCheeseBurger</h5>
+            <p class="card-text">$6.99</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/botros menu/Quarter pounder.png"
+            class="card-img-top"
+            alt="Burger 8"
+          />
+          <div class="card-body">
+            <h5 class="card-title">cup_of_cappuccino</h5>
+            <p class="card-text">$8.99</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="./assets/images/Little-tasty.png"
+            class="card-img-top"
+            alt="Burger 9"
+          />
+          <div class="card-body">
+            <h5 class="card-title">ChickenBurger</h5>
+            <p class="card-text">$6.49</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./assets/scripts/main.js"></script>
+  </body>
+</html>
