@@ -19,15 +19,19 @@
 		// init renderer
 		var renderer = new THREE.WebGLRenderer({
 			// antialias	: true,
-			alpha: true
+			alpha: true,
+			powerPreference: "high-performance",
 		});
 		renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-		// renderer.setPixelRatio( 1/2 );
+		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.domElement.style.position = 'absolute'
 		renderer.domElement.style.top = '0px'
 		renderer.domElement.style.left = '0px'
 		document.body.appendChild(renderer.domElement);
+
+		console.log(window.innerWidth, window.innerHeight, window.devicePixelRatio)
+
 
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
@@ -54,15 +58,16 @@
 		var arToolkitSource = new THREEx.ArToolkitSource({
 			// to read from the webcam
 			sourceType: 'webcam',
+			sourceUrl: null,
+			deviceId: null,
 
-			// to read from an image
-			// sourceType : 'image',
-			// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',
-
-			// to read from a video
-			// sourceType : 'video',
-			// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',
-		})
+			// resolution of at which we initialize in the source image
+			sourceWidth: 640,
+			sourceHeight: 480,
+			// resolution displayed for the source
+			displayWidth: 640,
+			displayHeight: 480,
+		});
 
 		arToolkitSource.init(function onReady() {
 			initARContext()
@@ -93,8 +98,10 @@
 				cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '/data/data/camera_para.dat',
 				detectionMode: 'mono',
 				maxDetectionRate: 120,
-				canvasWidth: 80 * 3,
-				canvasHeight: 60 * 3,
+				canvasWidth: 640,
+				canvasHeight: 480,
+				imageSmoothingEnabled : false,
+
 			})
 			// initialize it
 			arToolkitContext.init(function onCompleted() {
@@ -103,7 +110,7 @@
 				arToolkitContext.arController.orientation = getSourceOrientation();
 				arToolkitContext.arController.options.orientation = getSourceOrientation();
 
-				console.log('arToolkitContext', arToolkitContext);
+				console.log('a7aaaaaaaaaaaaaaaa', camera.projectionMatrix);
 				window.arToolkitContext = arToolkitContext;
 			})
 			artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
@@ -205,6 +212,6 @@
 			onRenderFcts.forEach(function (onRenderFct) {
 				onRenderFct(deltaMsec / 1000, nowMsec / 1000)
 			})
-		})
+		})	
 	</script>
 </body>
