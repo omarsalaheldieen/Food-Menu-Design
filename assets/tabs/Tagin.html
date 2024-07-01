@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <script src="./../../ThirdParty/aframe/dist/aframe-master.js"></script>
+  <script src="./../../ThirdParty/AR.js/aframe/build/aframe-ar.js"></script>
+  <!-- <script src="Scripts/smooth_script.js"></script> -->
+
+
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene vr-mode-ui="enabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+    embedded arjs="trackingMethod: best; sourceType: webcam; sourceWidth:1270.67; sourceHeight:953; displayWidth: 960; displayHeight: 720; ;debugUIEnabled: false;">
+
+      <a-marker id="marker" preset="hiro">
+      <!-- <a-box position='0 0.5 0' color="green" material="opacity: 0.5"></a-box> -->
+      <a-entity  rotation="270 0 0" position="0 0 0" scale="0.025 0.025 0.025" gltf-model="./../../Models/Tagin/scene.gltf"></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>

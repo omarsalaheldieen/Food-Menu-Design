@@ -1,0 +1,11 @@
+Model Information:
+* title:	McDonald's Double Cheeseburger
+* source:	https://sketchfab.com/3d-models/mcdonalds-double-cheeseburger-3fc5d6128b6347f39230a09217263551
+* author:	Cheap Objects (https://sketchfab.com/ovidiuclop)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "McDonald's Double Cheeseburger" (https://sketchfab.com/3d-models/mcdonalds-double-cheeseburger-3fc5d6128b6347f39230a09217263551) by Cheap Objects (https://sketchfab.com/ovidiuclop) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
